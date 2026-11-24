@@ -1,0 +1,16 @@
+# Mantém o main deste fork igual ao do projeto original (todo dia 06:00 UTC).
+# A nossa versão vive na branch "jhow"; o main fica sempre limpo pra PR.
+name: Sincronizar com o original
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh repo sync "$GITHUB_REPOSITORY" --source viniciusgambeta/mde-download- --branch main
+        env:
+          GH_TOKEN: ${{ github.token }}
