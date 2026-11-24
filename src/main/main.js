@@ -252,6 +252,24 @@ function registerIpc() {
         clipboard.writeText(fs.readFileSync(file, 'utf8'));
         return true;
     });
+
+    // Transcrição de arquivo local: arrastado (caminhos vêm da interface) ou escolhido aqui.
+    const startLocalFiles = (files) => {
+        const errors = [];
+        for (const file of [].concat(files || [])) {
+            try { jobs.startLocal(file); } catch (err) { errors.push(err.message); }
+        }
+        return errors[0] || null;
+    };
+    ipcMain.handle('local:start', (_e, files) => startLocalFiles(files));
+    ipcMain.handle('local:pick', async () => {
+        const picked = await dialog.showOpenDialog(win, {
+            title: 'Transcrever arquivo',
+            filters: [{ name: 'Áudio e vídeo', extensions: jobs.LOCAL_EXT.source.match(/\(([^)]+)\)/)[1].split('|') }],
+            properties: ['openFile', 'multiSelections'],
+        });
+        return picked.canceled ? null : startLocalFiles(picked.filePaths);
+    });
     ipcMain.on('file:drag', (event, id) => {
         const job = jobs.list().find((j) => j.id === id);
         const files = job ? job.files.filter((f) => fs.existsSync(f)) : [];
