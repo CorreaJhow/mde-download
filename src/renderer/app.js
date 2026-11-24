@@ -496,6 +496,7 @@ $('#open-folder').innerHTML = ICONS.folder;
 els.openSettings.innerHTML = ICONS.sliders;
 els.clear.innerHTML = ICONS.close;
 $('#field-icon').innerHTML = ICONS.link;
+$('#pick-file').innerHTML = ICONS.filePlus;
 els.sites.innerHTML = ['youtube', 'instagram', 'tiktok', 'x', 'generic'].map((key) => BADGES[key]).join('');
 
 els.url.addEventListener('input', onInput);
@@ -567,7 +568,8 @@ function showLocalError(message) {
     els.result.replaceChildren(el('div', 'result-note', message));
     setTimeout(() => { if (!detection) els.result.hidden = true; }, 4000);
 }
-$('#pick-file').addEventListener('click', async () => {
+$('#pick-file').addEventListener('click', async (event) => {
+    event.preventDefault();
     const error = await api.local.pick();
     if (error) showLocalError(error);
 });
